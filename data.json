@@ -1,0 +1,43 @@
+{
+  "Mihai Eminescu": {
+    "citate": [
+      "Stejarul nu crește pretitudindinea; buruienile, în tot locul.",
+      "Oamenii nu se deosebesc atât prin ceea ce zic, cât prin ceea ce fac.",
+      "Antitezele sunt viaţa.",
+      "Egalitatea nu există decât în matematică.",
+      "Adevărul este crud, dar numai el foloseşte."
+    ],
+    "cărți": [
+        {
+        "titlu": "Sărmanul Dionis",
+        "gen": "Dramă",
+        "anul_publicării": 1872
+        }
+    ]
+  },
+  "Robert Martin": {
+    "citate": [
+      "Truth can only be found in one place: the code.",
+      "It is not enough for code to work.",
+      "The only way to go fast, is to go well."
+    ],
+    "cărți": [
+        {
+          "titlu": "Clean Code",
+          "gen": "Programare",
+          "anul_publicării": 2008
+        },
+        {
+          "titlu": "Clean Architecture",
+          "gen": "Programare",
+          "anul_publicării": 2017
+        }
+    ],
+    "articole": [
+      {
+        "titlu": "Agile software development: principles, patterns and practices",
+        "anul_publicării": 2003
+      }
+    ]
+  }
+}

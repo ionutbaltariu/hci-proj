@@ -39,5 +39,37 @@
         "anul_publicării": 2003
       }
     ]
+  },
+    "Stephen King": {
+    "citate": [
+      "Books are a uniquely portable magic.",
+      "Get busy living or get busy dying.",
+      "Monsters are real, and ghosts are real too. They live inside us, and sometimes, they win.",
+      "Good books don't give up all their secrets at once.",
+      "Fiction is the truth inside the lie.",
+      "Go then, there are other worlds than these."
+    ],
+    "cărți": [
+        {
+          "titlu": "The Shining",
+          "gen": "Horror",
+          "anul_publicării": 1977
+        },
+        {
+          "titlu": "IT",
+          "gen": "Horror",
+          "anul_publicării": 1986
+        },
+        {
+          "titlu": "The mist",
+          "gen": "Horror",
+          "anul_publicării": 1980
+        },
+        {
+          "titlu": "The green mile",
+          "gen": "Horror",
+          "anul_publicării": 1996
+        }
+    ]
   }
 }

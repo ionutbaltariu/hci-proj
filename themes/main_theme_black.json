@@ -1,0 +1,10 @@
+{
+    "bkg_colour" : "#212121",
+    "general_text_colour" : "#F5F5F5",
+    "btn_colour" : "#757575",
+    "btn_text_colour" : "#F5F5F5",
+    "input_colour" : "#F5F5F5",
+    "placeholder_colour" : "#212121",
+    "table_colour": "#757575",
+    "error_colour" : "#FF000"
+}

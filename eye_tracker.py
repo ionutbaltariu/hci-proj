@@ -1,62 +1,83 @@
 import cv2
+import numpy as np
+
+def detect_faces(img, cascade):
+    gray_frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    coords = cascade.detectMultiScale(gray_frame, 1.3, 5)
+    if len(coords) > 1:
+        biggest = (0, 0, 0, 0)
+        for i in coords:
+            if i[3] > biggest[3]:
+                biggest = i
+        biggest = np.array([i], np.int32)
+    elif len(coords) == 1:
+        biggest = coords
+    else:
+        return None
+    for (x, y, w, h) in biggest:
+        frame = img[y:y + h, x:x + w]
+
+    return frame
 
 
-def eye_tracker():
-    # construire stream video
-    videoStream = cv2.VideoCapture(-1)
+def cut_eyebrows(img):
+    height, width = img.shape[:2]
+    eyebrow_h = int(height / 4)
+    img = img[eyebrow_h:height, 0:width]  # cut eyebrows out (15 px)
+    return img
+
+
+def blob_process(img, detector):
+    gray_frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, img = cv2.threshold(gray_frame, 42, 255, cv2.THRESH_BINARY)
+    img = cv2.erode(img, None, iterations=2)  # 1
+    img = cv2.dilate(img, None, iterations=4)  # 2
+    img = cv2.medianBlur(img, 5)  # 3
+    keypoints = detector.detect(img)
+    return keypoints
+
+
+def detect_eyes(img, cascade):
+    gray_frame = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    eyes = cascade.detectMultiScale(gray_frame, 1.3, 5)  # detect eyes
+    width = np.size(img, 1)  # get face frame width
+    height = np.size(img, 0)  # get face frame height
+    for (x, y, w, h) in eyes:
+        if y > height / 2:
+            pass
+        eyecenter = x + w / 2  # get the eye center
+        if eyecenter < width * 0.5:
+            left_eye = img[y:y + h, x:x + w]
+        else:
+            right_eye = img[y:y + h, x:x + w]
+    return left_eye, right_eye
+
+
+def main():
+    detector_params = cv2.SimpleBlobDetector_Params()
+    detector_params.filterByArea = True
+    detector_params.maxArea = 1500
+    detector = cv2.SimpleBlobDetector_create(detector_params)
+    cap = cv2.VideoCapture(0)
     face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-    eye_cascade = cv2.CascadeClassifier('haarcascade_eye_tree_eyeglasses.xml')
+    eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
     while True:
-        # preluare imagine
-        ret, cvImg = videoStream.read()
-        if ret:
-            # flip horizontal imagine
-            cvImg = cv2.flip(cvImg, 1)
-            # conversie gray scale
-            gray = cv2.cvtColor(cvImg, cv2.COLOR_BGR2GRAY)
-            # detecție caracteristici
-            faceRects = face_cascade.detectMultiScale(gray, 1.3, 5)
-            # intr-o imagine pot fi mai multe fețe (caracteristici cautate)
-            for (x, y, w, h) in faceRects:
-                # desenare unui punct in centrul dreptunghiului ce incadreaza caracteristicile
-                # detectate (fata/ochii)
-                # coordonatele punctului sunt: x + int(w / 2), y + int(h / 2)
-                cv2.rectangle(cvImg, (x, y, x + int(w / 2), y + int(h / 2)), (0, 255, 0), 3)
-
-                # ecuație de transformare fereastra poarta
-
-                print(f"x={x} \n y={y} \n w={w} \n h={h}")
-                roi_gray = gray[y:y + h, x:x + w]
-                roi_color = cvImg[y:y + h, x:x + w]
-                eyes = eye_cascade.detectMultiScale(roi_gray)
-                for (ex, ey, ew, eh) in eyes:
-                    cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 3)
-
-                # cv2.imshow('cv', cvImg)
-
-                xt = x - eyes[0][0]
-                yt = y - eyes[0][1]
-                # ....
-                # snap to grid
-                # avand in vedere ca mouse-ul nu va sta fix pe ecran, se va adauga un filtru
-                # suplimentar ce va consta intr-un grid avand cate un punct in centrul
-                # elementului activ de pe interfața (buton, meniu etc) orice coordonate (xt,yt)
-                # aflate in aria unui element activ vor fi modificate astfel incat sa preia
-                # coordonatele centrului elementului respectiv
-                xg = 0
-                yg = 0
-                # ....
-
-                # QtGui.QCursor.setPos(xg, yg)
-                # daca cursorul este ținut in aria respectivă un timp de 2 secunde generați un
-                # eveniment click stanga
-                # ....
-                # if time > 2sec:
-                #     pyautogui.leftClick()
-                # actualizare imagine pe interfața
-                # self.change_pixmap_signal.emit(cv_img)
-                if cv2.waitKey(5) == 27:
-                    break
+        _, frame = cap.read()
+        face_frame = detect_faces(frame, face_cascade)
+        if face_frame is not None:
+            eyes = detect_eyes(face_frame, eye_cascade)
+            for eye in eyes:
+                if eye is not None:
+                    eye = cut_eyebrows(eye)
+                    keypoints = blob_process(eye, detector)
+                    eye = cv2.drawKeypoints(eye, keypoints, eye, (0, 0, 255),
+                                            cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+        cv2.imshow('my image', face_frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
 
-eye_tracker()
+if __name__ == '__main__':
+    main()

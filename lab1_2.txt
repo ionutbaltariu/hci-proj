@@ -1,0 +1,23 @@
+2. Personas
+
+1.1 X este un student, deci o persoana tanara(cel mai probabil), nu neaparat experimentata in utilizarea calculatoarelor, care doreste sa caute articolele unui anumit autor pentru a le cita la lucrarea de licenta/diploma.
+
+1.2. Y este un/o entuziast/a a cititului de carti. De asemenea, Y are un set de autori favoriti si nu este neaparat experimentat/a in utilizarea calculatoarelor. Y doreste cautarea tuturor cartilor autorului/autorilor favoriti.
+
+1.3 Z este o persoana care iubeste citatele. Precum Y, el/ea are un set de autori favoriti. Z nu este neaparat experimentat/a in utilizarea calculatoarelor.
+
+1.4 T este o persoana deloc experimentata in folosirea mouse-ului/tastaturii. T doreste sa caute fie o carte, fie un articol ori un citat al unui autor specific. T poate face acest lucru controland aplicatia cu vocea, nefiind necesara interactiunea directa cu calculatorul prin mouse/tastatura.
+
+1.5 U este o persoana cu un handicap locomotor care nu ii permite folosirea mouse-ului/tastaturii. U doreste sa caute fie o carte, fie un articol ori un citat al unui autor specific. U poate face acest lucru controland aplicatia atat cu vocea, nefiind necesara interactiunea directa cu calculatorul prin mouse/tastatura.
+
+1.6 V este o persoana cu deficiente de vedere. V doreste sa caute fie o carte, fie un articol ori un citat al unui autor specific. V poate face acest lucru avand ca asigurare din partea calculatorului o dublare auditiva a actiunilor, in sensul ca fiecare posibila actiune va fi relatata si printr-un mesaj audio, inainte ca aceasta sa fie executata.
+
+
+3. Scenarii
+
+2.1. X realizeaza licenta in domeniul Tehnologiei Informatiei si este in cautarea articolelor unui anumit autor pe care il cunoaste ca fiind expert in subdomeniul ales. X poate folosi aplicatia pentru a realiza aceasta cautare de articole dupa autor, urmand sa descopere ce articole a publicat pentru a cerceta daca le poate cita in lucrarea de licenta.
+
+2.2 U este o persoana cu un handicap locomotor care nu ii permite miscarea membrelor. U este un fan infocat al lui Stephen Hawking si doreste sa afle ce carti a mai publicat acesta in ultima perioada. U poate folosi aplicatia controland cursorul cu miscarea ochilor si precizand autorul folosind controlul vocal. In caz ca U nu poate folosi nici vocea, lui U ii va fi oferit un OSK(on screen keyboard) pentru a putea introduce numele autorului prin selectia repetata a literelor.
+
+2.3 Z iubeste sa puna poze pe Facebook si mai ales sa puna citate in descrierea acestora. Se presupune ca Z cunoaste anumiti autori literari si doreste sa gaseasca mai multe citate pe care sa le puna la descrierile pozelor. Z poate cauta, folosind aplicatia propusa, citatele celebre ale unui anumit autor. De asemenea, daca Z nu doreste intr-un anumit moment sa foloseasca mouse-ul si tastatura, se va putea baza pe capacitatile de interpretare ale miscarilor ochilor sau a vocii puse la dispozitie in cadrul aplicatiei.
+

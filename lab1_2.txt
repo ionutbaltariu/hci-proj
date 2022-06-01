@@ -1,4 +1,25 @@
-2. Personas
+1. Grup Tinta
+
+Grupul tinta ar fi cel al persoanelor carora le place universul literar, atat in sensul cartilor clasice, cat si in sensul documentelor stiintifice (articole).
+
+2. Nevoile grupului tinta:
+- nevoia de a afla cartile publicate de un autor cautat
+- nevoia de a forma o parere rapida despre un autor bazata pe citatele acestuia
+- nevoia de a cauta articole sau lucrari stiintifice ale unui autor
+
+3. Operatiunile realizate cel mai des:
+
+- schimbarea categoriei elementelor cautate (carti, citate, articole)
+- activarea/dezactivarea anumitor functionalitati (control cu vocea, feedback audio, control cu ochii/fata)
+- cautarea unui anumit autor (introducerea acestuia si apasarea/declansarea butonului de cautare)
+
+
+4. Modalitati de interactiune ergonomica:
+
+- utilizatorul poate schimba schema de culori (tema) intr-un mod dinamic
+- utilizatorul poate folosi comenzi vocale pentru a introduce anumiti autori
+
+5. Personas
 
 1.1 X este un student, deci o persoana tanara(cel mai probabil), nu neaparat experimentata in utilizarea calculatoarelor, care doreste sa caute articolele unui anumit autor pentru a le cita la lucrarea de licenta/diploma.
 
@@ -13,7 +34,7 @@
 1.6 V este o persoana cu deficiente de vedere. V doreste sa caute fie o carte, fie un articol ori un citat al unui autor specific. V poate face acest lucru avand ca asigurare din partea calculatorului o dublare auditiva a actiunilor, in sensul ca fiecare posibila actiune va fi relatata si printr-un mesaj audio, inainte ca aceasta sa fie executata.
 
 
-3. Scenarii
+6. Scenarii
 
 2.1. X realizeaza licenta in domeniul Tehnologiei Informatiei si este in cautarea articolelor unui anumit autor pe care il cunoaste ca fiind expert in subdomeniul ales. X poate folosi aplicatia pentru a realiza aceasta cautare de articole dupa autor, urmand sa descopere ce articole a publicat pentru a cerceta daca le poate cita in lucrarea de licenta.
 

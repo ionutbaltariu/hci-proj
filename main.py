@@ -28,7 +28,7 @@ class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi("ioc.ui", self)
+        uic.loadUi("qt-ui/ioc.ui", self)
         self.configure_triggers()
 
         # self.autorTExt.mousePressEvent = self.play_search_sound()
@@ -48,7 +48,7 @@ class Ui(QtWidgets.QMainWindow):
         self.palette = self.palette()
         self.set_theme_colors()
 
-        self.face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+        self.face_cascade = cv2.CascadeClassifier("eyetrack/haarcascade_frontalface_default.xml")
         # threading.Thread(target=self.eye_tracker).start()
         self.voice_thread = threading.Thread(target=self.voice_handler_orchestrator)
         self.voice_thread.start()
@@ -72,10 +72,22 @@ class Ui(QtWidgets.QMainWindow):
 
     def set_theme_colors(self):
         self.palette.setColor(QPalette.Window, QColor(self.colors["bkg_colour"]))
-        self.searchButton.setStyleSheet(f"background-color: {self.colors['btn_colour']}; border-radius : 5%;"
-                                        f"color: {self.colors['btn_text_colour']};")
-        self.showAuthorsButton.setStyleSheet(f"background-color: {self.colors['btn_colour']}; border-radius : 5%;"
-                                             f"color: {self.colors['btn_text_colour']};")
+        self.searchButton.setStyleSheet(f"QPushButton"
+                                        f"{{background-color: {self.colors['btn_colour']}; border-radius : 5%;"
+                                        f"color: {self.colors['btn_text_colour']};"
+                                        "}"
+                                        "QPushButton::hover"
+                                        "{"
+                                        f"background-color : {self.colors['btn_hover_colour']};"
+                                        "}")
+        self.showAuthorsButton.setStyleSheet(f"QPushButton"
+                                             f"{{background-color: {self.colors['btn_colour']}; border-radius : 5%;"
+                                             f"color: {self.colors['btn_text_colour']};"
+                                             "}"
+                                             "QPushButton::hover"
+                                             "{"
+                                             f"background-color : {self.colors['btn_hover_colour']};"
+                                             "}")
         self.palette.setColor(QPalette.PlaceholderText, QColor(self.colors["placeholder_colour"]))
         self.palette.setColor(QPalette.WindowText, QColor(self.colors["general_text_colour"]))
         self.tableWidget.setStyleSheet(f"background-color: {self.colors['table_colour']}")
@@ -286,7 +298,6 @@ class Ui(QtWidgets.QMainWindow):
                     except Exception as e:
                         print(e)
                         speak("Te rog repetă.", self.speech_enabled)
-
 
                 print(text["transcription"].lower())
 

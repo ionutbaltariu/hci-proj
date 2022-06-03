@@ -1,7 +1,6 @@
 import json
 import sys
 import threading
-
 import cv2
 import speech_recognition as sr
 from PyQt5 import QtGui
@@ -49,7 +48,7 @@ class Ui(QtWidgets.QMainWindow):
         self.set_theme_colors()
 
         self.face_cascade = cv2.CascadeClassifier("eyetrack/haarcascade_frontalface_default.xml")
-        # threading.Thread(target=self.eye_tracker).start()
+        threading.Thread(target=self.eye_tracker).start()
         self.voice_thread = threading.Thread(target=self.voice_handler_orchestrator)
         self.voice_thread.start()
         self.setPalette(self.palette)
@@ -69,6 +68,10 @@ class Ui(QtWidgets.QMainWindow):
         self.searchButton.clicked.connect(self.search)
         self.showAuthorsButton.clicked.connect(self.show_authors)
         self.themeComboBox.currentTextChanged.connect(self.on_combobox_changed)
+        self.tableWidget.clicked.connect(self.get_cell_value)
+
+    def get_cell_value(self, index):
+        speak(index.data(), self.speech_enabled)
 
     def set_theme_colors(self):
         self.palette.setColor(QPalette.Window, QColor(self.colors["bkg_colour"]))
@@ -119,8 +122,12 @@ class Ui(QtWidgets.QMainWindow):
     def set_table_to_quotes(self):
         if self.autorText.toPlainText() not in self.app_data:
             self.display_err(ERR_AUTHOR_NOT_FOUND)
+            speak(f"Autorul {self.autorText.toPlainText()} nu există în baza noastră de date.",
+                  self.speech_enabled)
         elif "citate" not in self.app_data[self.autorText.toPlainText()]:
             self.display_err(err_author_doesnt_have("citate"))
+            speak(f"Nu au fost găsite {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
         else:
             self.notificationLabel.setText("")
             self.refit_table(["Citat"])
@@ -128,6 +135,9 @@ class Ui(QtWidgets.QMainWindow):
             self.tableWidget.setRowCount(len(quote_data))
             for idx, quote in enumerate(quote_data):
                 self.tableWidget.setItem(idx, 0, QTableWidgetItem(quote))
+
+            speak(f"Au fost găsite {len(quote_data)} {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
 
     def display_err(self, err):
         self.notificationLabel.setText(err)
@@ -137,8 +147,12 @@ class Ui(QtWidgets.QMainWindow):
     def set_table_to_books(self):
         if self.autorText.toPlainText() not in self.app_data:
             self.display_err(ERR_AUTHOR_NOT_FOUND)
+            speak(f"Autorul {self.autorText.toPlainText()} nu există în baza noastră de date.",
+                  self.speech_enabled)
         elif "cărți" not in self.app_data[self.autorText.toPlainText()]:
             self.display_err(err_author_doesnt_have("cărți"))
+            speak(f"Nu au fost găsite {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
         else:
             self.notificationLabel.setText("")
             self.refit_table(["Titlu", "Gen", "Anul publicării"])
@@ -149,11 +163,18 @@ class Ui(QtWidgets.QMainWindow):
                 self.tableWidget.setItem(idx, 1, QTableWidgetItem(book["gen"]))
                 self.tableWidget.setItem(idx, 2, QTableWidgetItem(str(book["anul_publicării"])))
 
+            speak(f"Au fost găsite {len(book_data)} {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
+
     def set_table_to_articles(self):
         if self.autorText.toPlainText() not in self.app_data:
             self.display_err(ERR_AUTHOR_NOT_FOUND)
+            speak(f"Autorul {self.autorText.toPlainText()} nu există în baza noastră de date.",
+                  self.speech_enabled)
         elif "articole" not in self.app_data[self.autorText.toPlainText()]:
             self.display_err(err_author_doesnt_have("articole"))
+            speak(f"Nu au fost găsite {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
         else:
             self.notificationLabel.setText("")
             self.refit_table(["Titlu", "Anul publicării"])
@@ -162,6 +183,9 @@ class Ui(QtWidgets.QMainWindow):
             for idx, article in enumerate(article_data):
                 self.tableWidget.setItem(idx, 0, QTableWidgetItem(article["titlu"]))
                 self.tableWidget.setItem(idx, 1, QTableWidgetItem(str(article["anul_publicării"])))
+
+            speak(f"Au fost găsite {len(article_data)} {self.selected_query} de la {self.autorText.toPlainText()}",
+                  self.speech_enabled)
 
     def refit_table(self, columns):
         self.tableWidget.setColumnCount(len(columns))
@@ -183,13 +207,12 @@ class Ui(QtWidgets.QMainWindow):
         self.play_toggle(self.eye_control_enabled)
 
     def toggle_voice_control(self):
-        self.voice_control_enabled = not self.voice_control_enabled
-
         if self.voice_control_enabled:
-            self._run_flag = True
-        else:
             self._run_flag = False
+        else:
+            self._run_flag = True
 
+        self.voice_control_enabled = not self.voice_control_enabled
         self.play_toggle(self.voice_control_enabled)
 
     def play_toggle(self, on):
@@ -207,13 +230,9 @@ class Ui(QtWidgets.QMainWindow):
         elif self.selected_query == "articole":
             self.set_table_to_articles()
 
-        if self.speech_enabled:
-            speak(f"Se caută {self.selected_query} de la {self.autorText.toPlainText()}",
-                  self.speech_enabled)
-
     def playsound_w_check(self, sound: str):
         if self.speech_enabled:
-            playsound(sound, block=False)
+            playsound(sound)
 
     def voice_handler_orchestrator(self):
         recognizer = sr.Recognizer()
@@ -289,10 +308,12 @@ class Ui(QtWidgets.QMainWindow):
                     else:
                         speak("Este deja oprit.", self.speech_enabled)
 
-                if "scrie" in recognized_text_words:
-                    index = recognized_text_words.index("scrie")
+                if "completează" in recognized_text_words:
+                    index = recognized_text_words.index("completează")
                     try:
                         words = recognized_text_words[index + 1:]
+                        for idx, word in enumerate(words):
+                            words[idx] = word[0].upper() + word[1:]
                         self.autorText.setPlainText(" ".join(words))
                         print(words)
                     except Exception as e:
@@ -304,66 +325,61 @@ class Ui(QtWidgets.QMainWindow):
     def eye_tracker(self):
         # construire stream video
         videoStream = cv2.VideoCapture(-1)
-        face_cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-        eye_cascade = cv2.CascadeClassifier("haarcascade_eye_tree_eyeglasses.xml")
+        eye_cascade = cv2.CascadeClassifier("eyetrack/haarcascade_eye_tree_eyeglasses.xml")
         while True:
-            # preluare imagine
-            ret, cvImg = videoStream.read()
-            if ret:
-                # flip horizontal imagine
-                cvImg = cv2.flip(cvImg, 1)
-                # conversie gray scale
-                gray = cv2.cvtColor(cvImg, cv2.COLOR_BGR2GRAY)
-                # detecție caracteristici
-                faceRects = self.face_cascade.detectMultiScale(gray, 1.3, 5)
-                # intr-o imagine pot fi mai multe fețe (caracteristici cautate)
-                for (x, y, w, h) in faceRects:
-                    # desenare unui punct in centrul dreptunghiului ce incadreaza caracteristicile
-                    # detectate (fata/ochii)
-                    # coordonatele punctului sunt: x + int(w / 2), y + int(h / 2)
-                    cv2.rectangle(cvImg, (x, y, x + int(w / 2), y + int(h / 2)), (0, 255, 0), 3)
+            if self.eye_control_enabled:
+                # preluare imagine
+                ret, cvImg = videoStream.read()
+                if ret:
+                    # flip horizontal imagine
+                    cvImg = cv2.flip(cvImg, 1)
+                    # conversie gray scale
+                    gray = cv2.cvtColor(cvImg, cv2.COLOR_BGR2GRAY)
+                    # detecție caracteristici
+                    faceRects = self.face_cascade.detectMultiScale(gray, 1.3, 5)
+                    # intr-o imagine pot fi mai multe fețe (caracteristici cautate)
+                    for (x, y, w, h) in faceRects:
+                        # ecuație de transformare fereastra poarta
 
-                    # ecuație de transformare fereastra poarta
+                        print(f"x={x} \n y={y} \n w={w} \n h={h}")
+                        roi_gray = gray[y:y + h, x:x + w]
+                        roi_color = cvImg[y:y + h, x:x + w]
+                        eyes = eye_cascade.detectMultiScale(roi_gray)
+                        for (ex, ey, ew, eh) in eyes:
+                            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 3)
 
-                    print(f"x={x} \n y={y} \n w={w} \n h={h}")
-                    roi_gray = gray[y:y + h, x:x + w]
-                    roi_color = cvImg[y:y + h, x:x + w]
-                    eyes = eye_cascade.detectMultiScale(roi_gray)
-                    for (ex, ey, ew, eh) in eyes:
-                        cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 3)
+                        # cv2.imshow("cv", cvImg)
+                        if len(eyes) > 0:
+                            xt = x - eyes[0][0]
+                            yt = y - eyes[0][1]
+                        else:
+                            xt = 0
+                            yt = 0
+                        # ....
+                        # snap to grid
+                        # avand in vedere ca mouse-ul nu va sta fix pe ecran, se va adauga un filtru
+                        # suplimentar ce va consta intr-un grid avand cate un punct in centrul
+                        # elementului activ de pe interfața (buton, meniu etc) orice coordonate (xt,yt)
+                        # aflate in aria unui element activ vor fi modificate astfel incat sa preia
+                        # coordonatele centrului elementului respectiv
+                        if len(eyes) > 0:
+                            xg = x - eyes[0][0]
+                            yg = y - eyes[0][1]
+                        else:
+                            xg = 0
+                            yg = 0
+                        # ....
 
-                    # cv2.imshow("cv", cvImg)
-                    if len(eyes) > 0:
-                        xt = x - eyes[0][0]
-                        yt = y - eyes[0][1]
-                    else:
-                        xt = 0
-                        yt = 0
-                    # ....
-                    # snap to grid
-                    # avand in vedere ca mouse-ul nu va sta fix pe ecran, se va adauga un filtru
-                    # suplimentar ce va consta intr-un grid avand cate un punct in centrul
-                    # elementului activ de pe interfața (buton, meniu etc) orice coordonate (xt,yt)
-                    # aflate in aria unui element activ vor fi modificate astfel incat sa preia
-                    # coordonatele centrului elementului respectiv
-                    if len(eyes) > 0:
-                        xg = x - eyes[0][0]
-                        yg = y - eyes[0][1]
-                    else:
-                        xg = 0
-                        yg = 0
-                    # ....
-
-                    QtGui.QCursor.setPos(xg, yg)
-                    # daca cursorul este ținut in aria respectivă un timp de 2 secunde generați un
-                    # eveniment click stanga
-                    # ....
-                    # if time > 2sec:
-                    #     pyautogui.leftClick()
-                    # actualizare imagine pe interfața
-                    # self.change_pixmap_signal.emit(cv_img)
-                    if cv2.waitKey(5) == 27:
-                        break
+                        QtGui.QCursor.setPos(xg, yg)
+                        # daca cursorul este ținut in aria respectivă un timp de 2 secunde generați un
+                        # eveniment click stanga
+                        # ....
+                        # if time > 2sec:
+                        #     pyautogui.leftClick()
+                        # actualizare imagine pe interfața
+                        # self.change_pixmap_signal.emit(cv_img)
+                        if cv2.waitKey(5) == 27:
+                            break
 
 
 app = QtWidgets.QApplication(sys.argv)

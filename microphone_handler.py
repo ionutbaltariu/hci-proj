@@ -5,11 +5,14 @@ from playsound import playsound
 
 
 def speak(text, is_speech_enabled):
-    if is_speech_enabled:
-        tts = gtts.gTTS(text, lang="ro")
-        tts.save("sunet.mp3")
-        playsound("sunet.mp3", block=False)
-        os.remove("sunet.mp3")
+    try:
+        if is_speech_enabled:
+            tts = gtts.gTTS(text, lang="ro")
+            tts.save("sunet.mp3")
+            playsound("sunet.mp3")
+            os.remove("sunet.mp3")
+    except Exception:
+        pass
 
 
 def listen(recognizer: sr.Recognizer, microphone: sr.Microphone):
